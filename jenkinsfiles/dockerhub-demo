@@ -15,11 +15,11 @@ pipeline {
              agent any
              steps {
                  script {
-                     sh "docker build -t liatrio/petclinic-tomcat:${env.BRANCH_NAME} ."
+                     sh "docker build -t levep79/petclinic-tomcat:${env.BRANCH_NAME} ."
                      if ( env.BRANCH_NAME == 'master' ) {
-                         containerVersion = getVersionFromContainer("liatrio/petclinic-tomcat:${env.BRANCH_NAME}")
-                         failIfVersionExists("liatrio","petclinic-tomcat",containerVersion)
-                         sh "docker build -t liatrio/petclinic-tomcat:${containerVersion} ."
+                         containerVersion = getVersionFromContainer("levep79/petclinic-tomcat:${env.BRANCH_NAME}")
+                         failIfVersionExists("levep79","petclinic-tomcat",containerVersion)
+                         sh "docker build -t levep79/petclinic-tomcat:${containerVersion} ."
                      }
                  }
              }
@@ -28,7 +28,7 @@ pipeline {
            agent any
            steps {
                sh 'docker rm -f petclinic-tomcat-temp || true'
-               sh "docker run -d --network=bridge --name petclinic-tomcat-temp liatrio/petclinic-tomcat:${env.BRANCH_NAME}"
+               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BRANCH_NAME}"
            }
        }
        stage('Smoke-Test') {
@@ -53,16 +53,20 @@ pipeline {
            agent any
            steps {
                 script {
-                    if ( env.BRANCH_NAME == 'master' )
-                        sh "docker push liatrio/petclinic-tomcat:${containerVersion}"
-                    else sh "docker push liatrio/petclinic-tomcat:${env.BRANCH_NAME}"
+                    withDockerRegistry(credentialsId: 'dockerhub-lev', url:''){
+                        if ( env.BRANCH_NAME == 'master' )
+                            sh "docker push levep79/petclinic-tomcat:${containerVersion}"
+                        else sh "docker push levep79/petclinic-tomcat:${env.BRANCH_NAME}"
+                    }
                 }
            }
        }
    }
    post {
         failure {
-            slackSend (channel:"#petclinic", color: "CF1318", message: "${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)")
+            script{
+                mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: '"${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+            }
         }
    }
 }
