@@ -15,12 +15,7 @@ pipeline {
              agent any
              steps {
                  script {
-                     sh "docker build -t levep79/petclinic-tomcat:${env.BRANCH_NAME} ."
-                     if ( env.BRANCH_NAME == 'master' ) {
-                         containerVersion = getVersionFromContainer("levep79/petclinic-tomcat:${env.BRANCH_NAME}")
-                         failIfVersionExists("levep79","petclinic-tomcat",containerVersion)
-                         sh "docker build -t levep79/petclinic-tomcat:${containerVersion} ."
-                     }
+                     sh "docker build -t levep79/petclinic-tomcat:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
                  }
              }
        }
@@ -28,7 +23,7 @@ pipeline {
            agent any
            steps {
                sh 'docker rm -f petclinic-tomcat-temp || true'
-               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BRANCH_NAME}"
+               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
            }
        }
        stage('Smoke-Test') {
@@ -54,9 +49,7 @@ pipeline {
            steps {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub-lev', url:''){
-                        if ( env.BRANCH_NAME == 'master' )
-                            sh "docker push levep79/petclinic-tomcat:${containerVersion}"
-                        else sh "docker push levep79/petclinic-tomcat:${env.BRANCH_NAME}"
+                       sh "docker push levep79/petclinic-tomcat:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                     }
                 }
            }
@@ -65,11 +58,11 @@ pipeline {
    post {
         failure {
             script{
-                mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: '"${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+                mail bcc: '', body: 'Build Failed', cc: '', from: 'jenkins@my_jenkins', replyTo: '', subject: '"${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
             }
         }
         success {
-            mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+            mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@my_jenkins', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
         }
    }
 }
