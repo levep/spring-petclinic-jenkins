@@ -23,19 +23,19 @@ pipeline {
            agent any
            steps {
                sh 'docker rm -f petclinic-tomcat-temp || true'
-               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
+               sh "docker run -d --network=cicd --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
            }
        }
        stage('Smoke-Test') {
            agent {
                docker {
                    image 'maven:3.5.0'
-                   args '--network=bridge'
+                   args '--network=cicd'
                }
            }
            steps {
                sh "cd regression-suite"
-               sh "mvn clean -B test -DPETCLINIC_URL=http://petclinic-tomcat:8080/petclinic/"
+               sh "mvn clean -B test -DPETCLINIC_URL=http://petclinic-tomcat-temp:8080/petclinic/"
                sh "sleep 1h"
            }
        }
