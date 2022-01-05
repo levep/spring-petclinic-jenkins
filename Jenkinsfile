@@ -15,7 +15,7 @@ pipeline {
              agent any
              steps {
                  script {
-                     sh "docker build -t levep79/petclinic-tomcat:-${env.BUILD_NUMBER} ."
+                     sh "docker build -t levep79/petclinic-tomcat:${env.BUILD_NUMBER} ."
                  }
              }
        }
@@ -23,7 +23,7 @@ pipeline {
            agent any
            steps {
                sh 'docker rm -f petclinic-tomcat-temp || true'
-               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:-${env.BUILD_NUMBER}"
+               sh "docker run -d --network=bridge --name petclinic-tomcat-temp levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
            }
        }
        stage('Smoke-Test') {
@@ -49,7 +49,7 @@ pipeline {
            steps {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub-lev', url:''){
-                       sh "docker push levep79/petclinic-tomcat:-${env.BUILD_NUMBER}"
+                       sh "docker push levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
                     }
                 }
            }
