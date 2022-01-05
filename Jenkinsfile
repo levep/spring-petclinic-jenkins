@@ -36,6 +36,7 @@ pipeline {
            steps {
                sh "cd regression-suite"
                sh "mvn clean -B test -DPETCLINIC_URL=http://petclinic-tomcat:8080/petclinic/"
+               sh "sleep 1h"
            }
        }
        stage('Stop local container') {
