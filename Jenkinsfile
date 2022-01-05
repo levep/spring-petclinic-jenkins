@@ -62,7 +62,9 @@ pipeline {
             }
         }
         success {
-            mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+            script {
+              mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+            }
         }
    }
 }
