@@ -49,7 +49,7 @@ pipeline {
            steps {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub-lev', url:''){
-                       sh "docker push levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
+                        sh "docker push levep79/petclinic-tomcat:${env.BUILD_NUMBER}"
                     }
                 }
            }
@@ -58,12 +58,12 @@ pipeline {
    post {
         failure {
             script{
-                mail bcc: '', body: 'Build Failed', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: '"${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+                mail bcc: '', body: 'Build Failed', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: "${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)", to: 'lev@gmail.com'
             }
         }
         success {
             script {
-              mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+              mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: "${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)", to: 'lev@gmail.com'
             }
         }
    }
