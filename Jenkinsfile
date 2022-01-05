@@ -63,7 +63,7 @@ pipeline {
         }
         success {
             script {
-              mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: "${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)", to: 'lev@gmail.com'
+              mail bcc: '', body: 'Build Success', cc: '', from: 'jenkins@gmail.com', replyTo: '', subject: "New Image levep79/petclinic-tomcat:${env.BUILD_NUMBER} have been pushed Successfuly ", to: 'lev@gmail.com'
             }
         }
    }
