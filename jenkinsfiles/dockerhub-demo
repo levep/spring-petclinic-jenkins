@@ -68,5 +68,8 @@ pipeline {
                 mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: '"${env.JOB_NAME} Failed (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
             }
         }
+        success {
+            mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: '"${env.JOB_NAME} Success (<${env.BUILD_URL}|Open>)"', to: 'lev@gmail.com'
+        }
    }
 }
